@@ -6,7 +6,8 @@
   "scripts": {
     "test": "npx playwright test",
     "ui:mode": "npx playwright test --ui",
-    "report": "npx playwright show-report"
+    "report": "npx playwright show-report",
+    "lint": "npx eslint . --fix"
   },
   "repository": {
     "type": "git",
@@ -21,8 +22,12 @@
   },
   "homepage": "https://github.com/Kramar8604/testctreate-pw-basic#readme",
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.59.1",
     "@types/node": "^25.6.0",
-    "typescript": "^6.0.3"
+    "eslint": "^10.2.1",
+    "eslint-plugin-playwright": "^2.10.2",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.1"
   }
 }
