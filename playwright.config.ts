@@ -44,16 +44,24 @@ export default defineConfig({
     baseURL: 'https://practicesoftwaretesting.com',
     testIdAttribute: 'data-test',
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on',
+    trace: 'on-first-retry',
   },
 
   /* Configure projects for major browsers */
-  projects: [
+    projects: [
+    {
+      name: 'setup',
+      testMatch: /.*\.setup\.ts/,
+    },
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { 
+        ...devices['Desktop Chrome'],
+        storageState: 'playwright/.auth/user.json', 
+      },
+      // dependencies: ['setup'],
     },
-
+  ],
     // {
     //   name: 'firefox',
     //   use: { ...devices['Desktop Firefox'] },
@@ -83,7 +91,6 @@ export default defineConfig({
     //   name: 'Google Chrome',
     //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
     // },
-  ],
 
   /* Run your local dev server before starting the tests */
   // webServer: {

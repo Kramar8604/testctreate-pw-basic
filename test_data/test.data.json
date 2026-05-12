@@ -1,0 +1,14 @@
+{
+  "user": {
+    "email": "kat.gorbach@gmail.com",
+    "password": "Kram040306!",
+    "name": "Kateryna Horbach"
+  },
+  "products": {
+    "slipJointPliers": {
+      "name": "Slip Joint Pliers",
+      "price": "9.17",
+      "successMessage": "Product added to shopping cart"
+    }
+  }
+}
