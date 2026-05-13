@@ -5,17 +5,10 @@ test('Verify user can filter products by category', async ({ page }) => {
     const homePage = new HomePage(page);
 
     await homePage.open();
-
-    const hammerCheckbox = page.getByRole('checkbox', { name: 'Hammer' });
-    await hammerCheckbox.waitFor({ state: 'visible' });
-    await hammerCheckbox.check();
-
+    await homePage.filterByCheckbox('Hammer');
     await page.waitForResponse(r => r.url().includes('/products') && r.status() === 200);
 
-    const products = page.locator('[data-test="product-name"]');
-    await expect(products.first()).toBeVisible();
-
-    const productNames = await products.allTextContents();
+    const productNames = await homePage.getProductNames();
     
     expect(productNames.length).toBeGreaterThan(0);
     for (const name of productNames) {

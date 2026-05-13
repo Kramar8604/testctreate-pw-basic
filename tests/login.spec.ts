@@ -7,7 +7,7 @@ test('Verify login as a user with valid credentials', async ({ page }) => {
   const loginPage = new LoginPage(page);
   const accountPage = new AccountPage(page);
   
-  await page.goto('/auth/login');
+  await loginPage.open();
   await loginPage.login(userCredentials.user.email, userCredentials.user.password);
   
   await expect(page).toHaveURL('/account');

@@ -2,8 +2,8 @@ import { test, expect } from "@playwright/test";
 import { HomePage } from "../page_objects/home.page";
 
 const sortingOptions = [
-    { name: 'Name (A-Z)', value: 'name,asc', expectedOrder: 'asc'},
-    { name: 'Name (Z-A)', value: 'name,desc', expectedOrder: 'desc' }
+    { name: 'Name (A-Z)', value: 'name,asc' },
+    { name: 'Name (Z-A)', value: 'name,desc' }
 ];
 
 for (const option of sortingOptions) {
@@ -11,15 +11,17 @@ for (const option of sortingOptions) {
         const homePage = new HomePage(page);
 
         await homePage.open();
-        await page.locator('[data-test="sort"]').selectOption(option.value);
-        await page.waitForResponse(response => response.url().includes('/products') && response.status() === 200);
+        
+        await homePage.selectSort(option.value);
 
-        await page.locator('[data-test="product-price"]').first().waitFor();
-        await page.waitForTimeout(1000);
+        await page.waitForResponse(response => 
+            response.url().includes('/products') && response.status() === 200
+        );
 
-        const productNames = await page.locator('[data-test="product-name"]').allTextContents();
+        const productNames = await homePage.getProductNames();
+
         const sortedNames = [...productNames].sort((a, b) => {
-            if (option.expectedOrder === 'asc') {
+            if (option.value === 'name,asc') {
                 return a.localeCompare(b);
             } else {
                 return b.localeCompare(a);
@@ -27,5 +29,5 @@ for (const option of sortingOptions) {
         });
 
         expect(productNames).toEqual(sortedNames);
-});
+    });
 }
