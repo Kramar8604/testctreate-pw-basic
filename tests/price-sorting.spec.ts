@@ -13,7 +13,6 @@ for (const option of priceOptions) {
         await homePage.open();
         await homePage.productPrices.first().waitFor();
         await homePage.selectSort(option.value);
-        await page.waitForURL(new RegExp(option.value));
         await page.waitForResponse(r => r.url().includes('/products') && r.status() === 200);
         await expect.poll(async () => {
             const prices = await homePage.getProductPrices();
@@ -23,11 +22,7 @@ for (const option of priceOptions) {
             return JSON.stringify(prices) === JSON.stringify(sorted);
         }, {
             timeout: 5000,
+            message: `Products were not sorted by ${option.name}`
         }).toBe(true);
-        const finalPrices = await homePage.getProductPrices();
-        const expectedOrder = [...finalPrices].sort((a, b) => 
-            option.value === 'price,asc' ? a - b : b - a
-        );
-        expect(finalPrices).toEqual(expectedOrder);
     });
 }

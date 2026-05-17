@@ -6,10 +6,11 @@ test('Verify user can filter products by category', async ({ page }) => {
 
     await homePage.open();
     await homePage.filterByCheckbox('Hammer');
+    
     await page.waitForResponse(r => r.url().includes('/products') && r.status() === 200);
 
     const productNames = await homePage.getProductNames();
-    
+
     expect(productNames.length).toBeGreaterThan(0);
     for (const name of productNames) {
         expect(name.toLowerCase()).toContain('hammer');
