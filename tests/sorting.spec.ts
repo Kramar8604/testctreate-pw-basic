@@ -1,31 +1,26 @@
 import { test, expect } from "@playwright/test";
-import { HomePage } from "../page_objects/home.page";
+import { HomePage, NameSorting } from "../page_objects/home.page";
 
-const nameOptions = [
-    { name: 'Name (A - Z)', value: 'name,asc' },
-    { name: 'Name (Z - A)', value: 'name,desc' }
-];
+test('Verify user can sort products by name from A to Z', async ({ page }) => {
+    const homePage = new HomePage(page);
 
-for (const option of nameOptions) {
-    test(`Verify user can sort products by ${option.name}`, async ({ page }) => {
-        const homePage = new HomePage(page);
+    await homePage.open();
+    await homePage.changeNameSorting(NameSorting.AtoZ);
 
-        await homePage.open();
-        await homePage.productNames.first().waitFor();
+    const actualNames = await homePage.getProductNames();
+    const expectedNames = [...actualNames].sort((a, b) => a.localeCompare(b));
 
-        await homePage.selectSort(option.value);
-        await page.waitForResponse(r => r.url().includes('/products') && r.status() === 200);
+    expect(actualNames).toEqual(expectedNames);
+});
 
-        await expect.poll(async () => {
-            const names = await homePage.getProductNames();
-            const sorted = [...names].sort((a, b) => 
-                option.value === 'name,asc' ? a.localeCompare(b) : b.localeCompare(a)
-            );
-            
-            return JSON.stringify(names) === JSON.stringify(sorted);
-        }, {
-            timeout: 5000,
-            message: `Products were not sorted by ${option.name}`
-        }).toBe(true);
-    });
-}
+test('Verify user can sort products by name from Z to A', async ({ page }) => {
+    const homePage = new HomePage(page);
+
+    await homePage.open();
+    await homePage.changeNameSorting(NameSorting.ZtoA);
+
+    const actualNames = await homePage.getProductNames();
+    const expectedNames = [...actualNames].sort((a, b) => b.localeCompare(a));
+
+    expect(actualNames).toEqual(expectedNames);
+});

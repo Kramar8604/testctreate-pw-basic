@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
-import { HomePage } from "../page_objects/home.page";
+import { HomePage, PriceSorting } from "../page_objects/home.page";
 
 const priceOptions = [
-    { name: 'Price (Low - High)', value: 'price,asc' },
-    { name: 'Price (High - Low)', value: 'price,desc' }
+    { name: 'Price (Low - High)', value: PriceSorting.LowToHigh },
+    { name: 'Price (High - Low)', value: PriceSorting.HighToLow }
 ];
 
 for (const option of priceOptions) {
@@ -11,13 +11,13 @@ for (const option of priceOptions) {
         const homePage = new HomePage(page);
 
         await homePage.open();
-        await homePage.productPrices.first().waitFor();
-        await homePage.selectSort(option.value);
-        await page.waitForResponse(r => r.url().includes('/products') && r.status() === 200);
+        await homePage.waitForPricesLoad();
+        await homePage.changeSorting(option.value);
+
         await expect.poll(async () => {
             const prices = await homePage.getProductPrices();
             const sorted = [...prices].sort((a, b) => 
-                option.value === 'price,asc' ? a - b : b - a
+                option.value === PriceSorting.LowToHigh ? a - b : b - a
             );
             return JSON.stringify(prices) === JSON.stringify(sorted);
         }, {

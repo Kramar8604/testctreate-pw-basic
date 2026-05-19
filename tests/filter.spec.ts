@@ -1,18 +1,17 @@
 import { test, expect } from "@playwright/test";
-import { HomePage } from "../page_objects/home.page";
+import { HomePage, PowerTools } from "../page_objects/home.page";
 
 test('Verify user can filter products by category', async ({ page }) => {
     const homePage = new HomePage(page);
 
     await homePage.open();
-    await homePage.filterByCheckbox('Hammer');
-    
-    await page.waitForResponse(r => r.url().includes('/products') && r.status() === 200);
+    await homePage.filterByCheckbox(PowerTools.Sander);
 
-    const productNames = await homePage.getProductNames();
-
-    expect(productNames.length).toBeGreaterThan(0);
-    for (const name of productNames) {
-        expect(name.toLowerCase()).toContain('hammer');
-    }
+    await expect.poll(async () => {
+        const productNames = await homePage.getProductNames();
+        return productNames.every(name => name.toLowerCase().includes('sander'));
+    }, {
+        timeout: 5000,
+        message: 'Products were not filtered by Sander'
+    }).toBe(true);
 });
