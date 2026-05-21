@@ -1,0 +1,14 @@
+{
+  "user": {
+    "email": "customer2@practicesoftwaretesting.com",
+    "password": "welcome01",
+    "name": "Jane Doe"
+  },
+  "products": {
+    "slipJointPliers": {
+      "name": "Slip Joint Pliers",
+      "price": "9.17",
+      "successMessage": "Product added to shopping cart"
+    }
+  }
+}
