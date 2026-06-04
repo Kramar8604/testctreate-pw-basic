@@ -1,4 +1,5 @@
 import { test, expect } from "../fixtures";
+import testData from "../test_data/test.data.json";
 
 test("Verify logged in user can complete a purchase", async ({ loggedInApp }) => {
     await loggedInApp.homePage.open();
@@ -30,12 +31,12 @@ test("Verify logged in user can complete a purchase", async ({ loggedInApp }) =>
     await loggedInApp.checkoutPage.proceedAsLoggedIn();
 
     await loggedInApp.checkoutPage.fillBillingAddress(
-        "AT",
-        "1010",
-        "42",
-        "Main Street",
-        "Vienna",
-        "Vienna"
+        testData.billingAddress.country,
+        testData.billingAddress.postcode,
+        testData.billingAddress.houseNumber,
+        testData.billingAddress.street,
+        testData.billingAddress.city,
+        testData.billingAddress.state
     );
 
     const today = new Date();
@@ -45,10 +46,10 @@ test("Verify logged in user can complete a purchase", async ({ loggedInApp }) =>
     const expirationDate = `${month}/${year}`;
 
     await loggedInApp.checkoutPage.payByCreditCard(
-        "1111-1111-1111-1111",
+        testData.creditCard.number,
         expirationDate,
-        "111",
-        "Jane Doe"
+        testData.creditCard.cvv,
+        testData.creditCard.holderName
     );
 
     await expect(loggedInApp.checkoutPage.paymentSuccessAlert).toBeVisible();

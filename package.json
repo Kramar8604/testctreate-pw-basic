@@ -23,7 +23,7 @@
   "homepage": "https://github.com/Kramar8604/testctreate-pw-basic#readme",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@playwright/test": "^1.59.1",
+    "@playwright/test": "^1.60.0",
     "@types/node": "^25.6.0",
     "eslint": "^10.2.1",
     "eslint-plugin-playwright": "^2.10.2",
