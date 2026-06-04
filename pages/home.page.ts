@@ -35,7 +35,7 @@ export class HomePage extends BasePage {
         super(page);
         this.sortDropdown = page.getByTestId("sort");
         this.productPrices = page.getByTestId("product-price");
-        this.productNames = page.locator(".card-title"); // Повернули старий надійний селектор назв
+        this.productNames = page.locator(".card-title");
         this.categoryCheckbox = (name: string) => page.getByLabel(name);
     }
 
@@ -43,12 +43,32 @@ export class HomePage extends BasePage {
         await this.page.goto("/");
     }
 
-    async waitForPricesLoad(): Promise<void> {
-        await this.productPrices.first().waitFor();
+    async selectFirstProduct(): Promise<void> {
+        const firstCard = this.page.locator('.card').first();
+        await firstCard.locator('.card-title').waitFor({ state: 'visible' });
+        await firstCard.click();
+    }
+
+    async addProductToCart(): Promise<void> {
+        await this.page.locator('//button[contains(text(), "Add to Cart")]').click();
     }
 
     async clickProductByName(name: string): Promise<void> {
         await this.page.locator('.card-title', { hasText: name }).click();
+    }
+
+    async getProductNames(): Promise<string[]> {
+        const names = await this.productNames.allTextContents();
+        return names.map(name => name.trim());
+    }
+
+    async getProductPrices(): Promise<number[]> {
+        const prices = await this.productPrices.allInnerTexts();
+        return prices.map(p => parseFloat(p.replace("$", "")));
+    }
+
+    async waitForPricesLoad(): Promise<void> {
+        await this.productPrices.first().waitFor();
     }
 
     async filterByCheckbox(name: string): Promise<void> {
@@ -64,15 +84,5 @@ export class HomePage extends BasePage {
     async changeNameSorting(option: NameSorting): Promise<void> {
         await this.sortDropdown.selectOption(option);
         await this.page.waitForResponse(r => r.url().includes("/products") && r.status() === 200);
-    }
-
-    async getProductPrices(): Promise<number[]> {
-        const prices = await this.productPrices.allInnerTexts();
-        return prices.map(p => parseFloat(p.replace("$", "")));
-    }
-
-    async getProductNames(): Promise<string[]> {
-        const names = await this.productNames.allTextContents();
-        return names.map(name => name.trim());
     }
 }

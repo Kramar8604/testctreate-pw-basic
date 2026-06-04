@@ -1,36 +1,26 @@
-import { test, expect } from "@playwright/test";
-import { HomePage } from "../page_objects/home.page";
-import { ProductPage } from "../page_objects/product.page";
-import userCredentials from "../test_data/test.data.json";
+import { test, expect } from "../fixtures";
+import testData from "../test_data/test.data.json";
 
-test('Verify user can add product to cart', async ({ page }) => {
-    const homePage = new HomePage(page);
-    const productPage = new ProductPage(page);
+test("Verify user can add product to cart", async ({ app }) => {
+    const productName = testData.products.slipJointPliers.name;
+    const productPrice = testData.products.slipJointPliers.price;
+    const successMsg = testData.products.slipJointPliers.successMessage;
 
-    await homePage.open();
+    await app.homePage.open();
+    await app.homePage.clickProductByName(productName);
 
-    const productName = userCredentials.products.slipJointPliers.name;
-    const productPrice = userCredentials.products.slipJointPliers.price;
-    const successMsg = userCredentials.products.slipJointPliers.successMessage;
+    await expect(app.productPage.productName).toHaveText(productName);
+    await expect(app.productPage.productPrice).toHaveText(productPrice);
 
-    await homePage.clickProductByName(productName);
-    
-    await expect(page).toHaveURL(/.*product/);
-    await expect(productPage.productName).toHaveText(productName);
-    await expect(productPage.productPrice).toHaveText(productPrice);
+    await app.productPage.addToCart();
 
-    const responsePromise = page.waitForResponse(r => r.url().includes('/carts') && r.status() === 200);
-    await productPage.addToCart();
-    await responsePromise;
+    await expect(app.productPage.alert).toBeVisible();
+    await expect(app.productPage.alert).toContainText(successMsg);
+    await expect(app.homePage.header.cartQuantity).toHaveText("1");
 
-    await expect(productPage.alert).toBeVisible();
-    await expect(productPage.alert).toContainText(successMsg);
-    await expect(homePage.header.cartQuantity).toHaveText('1');
+    await app.homePage.header.cartIcon.click();
 
-    await homePage.header.cartIcon.click();
-
-    await expect(page).toHaveURL(/.*checkout/);
-    await expect(productPage.cartRows).toHaveCount(1);
-    await expect(productPage.cartProductTitle).toHaveText(productName);
-    await expect(productPage.proceedToCheckoutBtn).toBeVisible();
+    await expect(app.cartPage.cartRows).toHaveCount(1);
+    await expect(app.cartPage.cartProductTitle).toHaveText(productName);
+    await expect(app.cartPage.proceedToCheckoutBtn).toBeVisible();
 });

@@ -48,20 +48,34 @@ export default defineConfig({
   },
 
   /* Configure projects for major browsers */
-    projects: [
+  projects: [
     {
       name: 'setup',
       testMatch: /.*\.setup\.ts/,
     },
     {
-      name: 'chromium',
+      name: 'guest-tests',
+      use: { 
+        ...devices['Desktop Chrome'],
+      },
+      testMatch: [
+        /sorting\.spec\.ts/, 
+        /price-sorting\.spec\.ts/, 
+        /view\.product\.details\.spec\.ts/, 
+        /filter\.spec\.ts/
+      ],
+    },
+    {
+      name: 'logged-in-tests',
       use: { 
         ...devices['Desktop Chrome'],
         storageState: 'playwright/.auth/user.json', 
       },
       dependencies: ['setup'],
+      testMatch: /.*\.spec\.ts/,
     },
   ],
+
     // {
     //   name: 'firefox',
     //   use: { ...devices['Desktop Firefox'] },

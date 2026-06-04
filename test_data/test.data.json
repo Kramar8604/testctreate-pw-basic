@@ -1,6 +1,6 @@
 {
   "user": {
-    "email": "customer2@practicesoftwaretesting.com",
+    "email": "customer@practicesoftwaretesting.com",
     "password": "welcome01",
     "name": "Jane Doe"
   },
@@ -10,5 +10,18 @@
       "price": "9.17",
       "successMessage": "Product added to shopping cart"
     }
+  },
+  "billingAddress": {
+    "country": "AT",
+    "postcode": "1010",
+    "houseNumber": "42",
+    "street": "Main Street",
+    "city": "Vienna",
+    "state": "Vienna"
+  },
+  "creditCard": {
+    "number": "1111-1111-1111-1111",
+    "cvv": "111",
+    "holderName": "Jane Doe"
   }
 }
