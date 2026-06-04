@@ -50,9 +50,7 @@ export class HomePage extends BasePage {
     }
 
     async addProductToCart(): Promise<void> {
-        const btn = this.page.getByTestId("add-to-cart");
-        await btn.waitFor({ state: 'visible' });
-        await btn.click();
+        await this.page.locator('//button[contains(text(), "Add to Cart")]').click();
     }
 
     async clickProductByName(name: string): Promise<void> {

@@ -1,31 +1,56 @@
 import { test, expect } from "../fixtures";
 
-test('Verify user can complete checkout', async ({ loggedInApp, page }) => {
-    const app = loggedInApp;
+test("Verify logged in user can complete a purchase", async ({ loggedInApp }) => {
+    await loggedInApp.homePage.open();
+    await loggedInApp.homePage.waitForPricesLoad();
 
-    await app.homePage.open();
-    await app.homePage.selectFirstProduct();
-    await app.homePage.addProductToCart();
+    const productNames = await loggedInApp.homePage.getProductNames();
+    const productPrices = await loggedInApp.homePage.getProductPrices();
 
-    await page.goto('/checkout');
+    const firstProductName = productNames[0];
+    const firstProductPrice = productPrices[0];
 
-    await app.checkoutPage.fillBillingAddress({
-        postcode: '12345',
-        houseNumber: '42',
-        street: 'Test street',
-        city: 'Frankfurt',
-        state: 'Hessen'
-    });
-    
-    await page.getByTestId('proceed-to-payment').click();
+    await loggedInApp.homePage.clickProductByName(firstProductName);
+    await loggedInApp.productPage.addToCart();
+    await expect(loggedInApp.productPage.alert).toBeVisible();
 
-    await app.checkoutPage.fillPaymentDetails({
-        number: '1111-1111-1111-1111',
-        expiration: '12/26',
-        cvv: '111',
-        name: 'John Doe'
-    });
+    await loggedInApp.homePage.header.cartIcon.click();
 
-    await expect(app.checkoutPage.successAlert).toBeVisible();
-    await expect(app.checkoutPage.successAlert).toContainText('Payment was successful');
+    const cartTitle = await loggedInApp.cartPage.getProductTitle();
+    const cartPrice = await loggedInApp.cartPage.getProductPrice();
+    const cartTotal = await loggedInApp.cartPage.getTotalPrice();
+
+    expect(cartTitle).toBe(firstProductName);
+    expect(cartPrice).toContain(firstProductPrice.toFixed(2));
+    expect(cartTotal).toContain(firstProductPrice.toFixed(2));
+
+    await loggedInApp.cartPage.proceedToCheckout();
+
+    await expect(loggedInApp.checkoutPage.proceedToCheckoutBtn2).toBeVisible();
+    await loggedInApp.checkoutPage.proceedAsLoggedIn();
+
+    await loggedInApp.checkoutPage.fillBillingAddress(
+        "AT",
+        "1010",
+        "42",
+        "Main Street",
+        "Vienna",
+        "Vienna"
+    );
+
+    const today = new Date();
+    today.setMonth(today.getMonth() + 3);
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const year = String(today.getFullYear());
+    const expirationDate = `${month}/${year}`;
+
+    await loggedInApp.checkoutPage.payByCreditCard(
+        "1111-1111-1111-1111",
+        expirationDate,
+        "111",
+        "Jane Doe"
+    );
+
+    await expect(loggedInApp.checkoutPage.paymentSuccessAlert).toBeVisible();
+    await expect(loggedInApp.checkoutPage.paymentSuccessAlert).toContainText("Payment was successful");
 });

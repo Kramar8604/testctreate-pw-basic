@@ -1,8 +1,8 @@
 {
   "user": {
-    "email": "customer2@practicesoftwaretesting.com",
+    "email": "customer@practicesoftwaretesting.com",
     "password": "welcome01",
-    "name": "Jack Howe"
+    "name": "Jane Doe"
   },
   "products": {
     "slipJointPliers": {

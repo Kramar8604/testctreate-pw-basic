@@ -6,11 +6,8 @@ const authFile = "playwright/.auth/user.json";
 
 setup("authenticate", async ({ page }) => {
     const loginPage = new LoginPage(page);
-
     await loginPage.open();
     await loginPage.login(testData.user.email, testData.user.password);
-
-    await expect(page).toHaveURL("/account");
-
+    await expect(page).toHaveURL("https://practicesoftwaretesting.com/account");
     await page.context().storageState({ path: authFile });
 });
